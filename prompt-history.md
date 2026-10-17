@@ -100,3 +100,50 @@ Linked it from the tracker and `README.md`. Nothing committed.
 **Summary:** Committed the Johor project folder (`project/01 - Johor Digital Government Next Steps (China Benchmark)/`),
 the `CLAUDE.md` prompt-history section, `prompt-history.md` and the `README.md` index updates as `b198b50`, and
 pushed it to `origin/main`. This entry was committed separately afterwards.
+
+---
+
+## 2026-10-17 15:58 — Two-agent realism review of Project 01 documents (project/01 - Johor Digital Government Next Steps (China Benchmark)/reviews/)
+
+**Prompt:** launch two agents, and get them to review the documents in the Project 01 — Agent 1: an expert in
+bidding and delivering IT project for the Malaysian government; Agent 2: an expert in bidding and delivering IT
+project for the Chinese government. Look and see if the assumptions and opportunity are realistic, I want an
+honest opinion.
+
+**Summary:** Launched two general-purpose agents in parallel, each reading all five Project 01 docs and web-verifying
+load-bearing claims. Their full reviews:
+- **Agent 1 (Malaysian gov IT delivery)** — package is useful but assumes a coherent buyer: no funding model
+  (Johor 2026 budget ~RM2.546bn), no procurement route (e-perolehan, 16 PBTs procuring independently), no
+  accountable owner, no electoral clock (PRN Johor by 2027). Missed PDPA's blanket state exemption. Bid A1, A3,
+  A4, B5, B1; park C6, C5; kill C4 and C3-as-scoped; C1 is 2028+.
+- **Agent 2 (Chinese gov IT delivery)** — China narrative is a curated success reel: Suzhou 信易贷 500bn/8,600
+  firms is arithmetically absurd, Beijing Data Group numbers muddled (actual: 3bn→6bn, months old), "100% online"
+  is item-coverage, Shanghai Data Exchange is a second slow-start case, Digital Guangdong's Tencent stake was
+  diluted to ~16.7% by a central SOE in 2021. C1/C2/C4/C3 quietly assume coercion, scale or SOE financing Johor
+  lacks; Johor's real lever is grant/appointment control over the 16 PBTs.
+Both saved under `reviews/` (see next entry).
+
+---
+
+## 2026-10-17 16:00 — Document agent reviews in Project 01 reviews folder (project/01 - Johor Digital Government Next Steps (China Benchmark)/)
+
+**Prompt:** document the review in a review folder within the 01 project folder with each agent creating their own
+folder.
+
+**Summary:** Created `reviews/` with one folder per agent:
+- `reviews/agent-1-malaysian-government-it-expert/review.md`
+- `reviews/agent-2-chinese-government-it-expert/review.md`
+Each doc has a header (reviewer persona, date, question, agent-generated caveat) and the full review with sources.
+Added an "Expert review takeaways (2026-10-17)" subsection to the tracker's Idea section linking both reviews, and
+updated the Project 01 row in `README.md`. Nothing committed.
+
+---
+
+## 2026-10-17 16:04 — Commit expert reviews on a branch and raise a PR (project/01 - Johor Digital Government Next Steps (China Benchmark)/reviews/)
+
+**Prompt:** commit all unrevioned files to the branch and then raise a PR.
+
+**Summary:** Created branch `project-01-expert-reviews` from `main`. Committed the two agent reviews under `reviews/`,
+the tracker's "Expert review takeaways" section, the `README.md` row update and these prompt-history entries.
+`.qoder/settings.local.json` is per-user agent settings, so it was added to `.gitignore` next to
+`.claude/settings.local.json` instead of being committed. Pushed the branch and opened a PR against `main`.
