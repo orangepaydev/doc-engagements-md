@@ -16,7 +16,7 @@ Each entry: **file** — what it contains · *answers:* the question it answers 
 
 | # | Project | Status | Description · keys |
 | --- | --- | --- | --- |
-| _none yet_ | | | |
+| 01 | [Johor Digital Government Next Steps (China Benchmark)](project/01%20-%20Johor%20Digital%20Government%20Next%20Steps%20(China%20Benchmark)/README.md) | Idea | Johor State Government is starting a data lake. Benchmark China's municipal digital-government journey to choose next projects: low-hanging fruit, infrastructure/enablers, strategic. Supporting docs: Johor baseline profile (governance, PBT tiers, DC boom, DSA 2025, JS-SEZ/IMFC-J), China journey (最多跑一次, 一网通办, e-certificates, 秒批, 高效办成一件事, City Brain, 12345, 信易贷), China delivery models (in-house vs contractor, 管运分离, Digital Guangdong JV, data groups, PPP failure) with success/failure case studies and a numbers register, opportunity longlist A1–C6 with client questions · *answers:* what should Johor build on its data lake? what did Chinese cities do and in what order? did China build in-house or outsource? which projects failed and why? · *keys:* Johor, data lake, smart city, digital government, e-government, China, Hangzhou, Shanghai, Shenzhen, Suzhou, Zhejiang, PBT, paperless, approvals, data sharing |
 
 ## 2. How-to / Reference (`howto/`, `reference/`)
 
@@ -43,5 +43,6 @@ _No entries yet._
 ## 6. Agent tooling
 
 - **[CLAUDE.md](CLAUDE.md)** (also `AGENT.md`, `AGENTS.md`) — librarian agent instructions for this repo · *answers:* how should an agent behave here? · *keys:* agent, librarian, claude, instructions
+- **[prompt-history.md](prompt-history.md)** — chronological log of every prompt given to agents in this repo: title/path, date and time, prompt, summary of what was done · *answers:* what was asked before? why does this file/project exist? · *keys:* prompt history, log, audit trail, agent prompts
 - **[.claude/skills/new-project/SKILL.md](.claude/skills/new-project/SKILL.md)** — `/new-project` skill: scaffold the next numbered project folder and tracker · *keys:* skill, new project, scaffold
 - **[.claude/skills/progress-report/SKILL.md](.claude/skills/progress-report/SKILL.md)** — `/progress-report` skill: write a dated progress report for a project · *keys:* skill, progress report, status

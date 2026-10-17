@@ -56,6 +56,15 @@ explored, validated, prototyped, or built — as opposed to a standalone referen
 
 In Claude Code, the `/new-project` and `/progress-report` skills (`.claude/skills/`) run steps 2–5 for you.
 
+## Prompt history
+
+Append prompts into the [`prompt-history.md`](prompt-history.md) file. Each prompt should have a clear title and a
+description of the task. If the prompt is related to a specific file, include the file path in the title. If the
+prompt is related to a specific project or document, include the project folder or document name in the title.
+Include the time the prompt was added. Add entries at the bottom, in the format already used there (**Prompt:** /
+**Summary:**). Long pasted material in a prompt can be shortened to a one-line description of what was pasted and
+where it was stored.
+
 ## Ground rules
 
 - `README.md` is the map. It exists so an agent (or human) never has to read the whole repo to answer one question — treat scanning the full tree as a last resort, not a default.
