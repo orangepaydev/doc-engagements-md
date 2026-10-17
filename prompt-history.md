@@ -146,4 +146,5 @@ updated the Project 01 row in `README.md`. Nothing committed.
 **Summary:** Created branch `project-01-expert-reviews` from `main`. Committed the two agent reviews under `reviews/`,
 the tracker's "Expert review takeaways" section, the `README.md` row update and these prompt-history entries.
 `.qoder/settings.local.json` is per-user agent settings, so it was added to `.gitignore` next to
-`.claude/settings.local.json` instead of being committed. Pushed the branch and opened a PR against `main`.
+`.claude/settings.local.json` instead of being committed. Pushed the branch. The PR has to be opened from GitHub
+because the `gh` CLI isn't installed here: https://github.com/orangepaydev/doc-engagements-md/pull/new/project-01-expert-reviews
