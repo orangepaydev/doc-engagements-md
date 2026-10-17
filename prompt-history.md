@@ -90,3 +90,13 @@ down too so we could launch additional reserach later.
   register with confidence levels and follow-up questions, and the evidence gaps.
 
 Linked it from the tracker and `README.md`. Nothing committed.
+
+---
+
+## 2026-10-17 13:32 — Commit and push session changes to main
+
+**Prompt:** commit these changes and push directly to main
+
+**Summary:** Committed the Johor project folder (`project/01 - Johor Digital Government Next Steps (China Benchmark)/`),
+the `CLAUDE.md` prompt-history section, `prompt-history.md` and the `README.md` index updates as `b198b50`, and
+pushed it to `origin/main`. This entry was committed separately afterwards.
