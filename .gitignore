@@ -6,6 +6,7 @@
 
 # Local agent settings
 .claude/settings.local.json
+.qoder/settings.local.json
 
 # macOS system files
 .DS_Store
