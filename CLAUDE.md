@@ -58,12 +58,29 @@ In Claude Code, the `/new-project` and `/progress-report` skills (`.claude/skill
 
 ## Prompt history
 
-Append prompts into the [`prompt-history.md`](prompt-history.md) file. Each prompt should have a clear title and a
-description of the task. If the prompt is related to a specific file, include the file path in the title. If the
-prompt is related to a specific project or document, include the project folder or document name in the title.
-Include the time the prompt was added. Add entries at the bottom, in the format already used there (**Prompt:** /
-**Summary:**). Long pasted material in a prompt can be shortened to a one-line description of what was pasted and
-where it was stored.
+Log every prompt in [`prompt-history/`](prompt-history/), one file per month (`YYYY-MM.md`). Do this with the
+append script, which writes the timestamp, separator and heading for you, and creates the month's file when needed:
+
+```sh
+prompt-history/add.sh "<title>" <<'EOF'
+**Prompt:** <the prompt as given>
+
+**Summary:** <what was done>
+EOF
+```
+
+- **Never read a history file to add an entry.** The format is above, and the script appends without opening the
+  file. Don't use an editor tool on these files, because editors read the whole file first.
+- **Title:** clear and specific. Include the file path when the prompt is about one file, and the project folder or
+  document name when it is about a project or document.
+- **Prompt:** the prompt as given. Shorten long pasted material to one line saying what was pasted and where it was
+  stored.
+- Keep the `'EOF'` quotes so backticks and `$` in the body aren't run by the shell. Avoid backticks in the title, or
+  single-quote it.
+- **No shell available?** Append the same block to the end of the current month's file without reading it:
+  `---`, a blank line, then `## YYYY-MM-DD HH:MM — <title>`, then the body. Create the file with a
+  `# Prompt History — YYYY-MM` heading if it doesn't exist.
+- **Looking up past prompts:** `grep -rn "<term>" prompt-history/`, or `tail` / read only the month you need.
 
 ## Ground rules
 

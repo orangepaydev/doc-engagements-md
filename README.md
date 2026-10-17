@@ -43,6 +43,6 @@ _No entries yet._
 ## 6. Agent tooling
 
 - **[CLAUDE.md](CLAUDE.md)** (also `AGENT.md`, `AGENTS.md`) — librarian agent instructions for this repo · *answers:* how should an agent behave here? · *keys:* agent, librarian, claude, instructions
-- **[prompt-history.md](prompt-history.md)** — chronological log of every prompt given to agents in this repo: title/path, date and time, prompt, summary of what was done · *answers:* what was asked before? why does this file/project exist? · *keys:* prompt history, log, audit trail, agent prompts
+- **[prompt-history/](prompt-history/)** — log of every prompt given to agents in this repo, one file per month (`YYYY-MM.md`): title/path, date and time, prompt, summary of what was done. Append with `prompt-history/add.sh`, never by reading the file first · *answers:* what was asked before? why does this file/project exist? · *keys:* prompt history, log, audit trail, agent prompts, add.sh
 - **[.claude/skills/new-project/SKILL.md](.claude/skills/new-project/SKILL.md)** — `/new-project` skill: scaffold the next numbered project folder and tracker · *keys:* skill, new project, scaffold
 - **[.claude/skills/progress-report/SKILL.md](.claude/skills/progress-report/SKILL.md)** — `/progress-report` skill: write a dated progress report for a project · *keys:* skill, progress report, status
