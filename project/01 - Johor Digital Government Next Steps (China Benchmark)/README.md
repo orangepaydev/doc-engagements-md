@@ -39,6 +39,10 @@ Supporting docs in this folder:
   success and failure case studies for each bucket and a 42-row numbers register for follow-up research.
 - [opportunity-longlist.md](opportunity-longlist.md): candidate Johor projects in the three buckets, each mapped to
   its Chinese precedent and the Johor adaptation needed.
+- [research/](research/): numbered external research notes (`NN-<topic>.md`), each with its source link, a summary
+  and what it means for us.
+  - [01-mdec-national-ai-compute-exchange.md](research/01-mdec-national-ai-compute-exchange.md): MDEC's National AI
+    Compute Exchange (Q1 2027), MD Status, Budget 2027 AI measures.
 
 ## Validation
 [What we tried to de-risk it before committing real time — a prototype, a client conversation, a spike.
