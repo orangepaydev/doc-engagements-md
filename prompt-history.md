@@ -100,3 +100,28 @@ Linked it from the tracker and `README.md`. Nothing committed.
 **Summary:** Committed the Johor project folder (`project/01 - Johor Digital Government Next Steps (China Benchmark)/`),
 the `CLAUDE.md` prompt-history section, `prompt-history.md` and the `README.md` index updates as `b198b50`, and
 pushed it to `origin/main`. This entry was committed separately afterwards.
+
+---
+
+## 2026-10-22 — Project 01: findings presentation for MDEC / Johor state IT (`project/01 - …/presentation/`)
+
+**Prompt:** For project 01, build a presentation of the findings for a Malaysian government business-IT contact
+(at MDEC and involved with Johor state IT), who will present it to their own board (Johor state leadership). Share
+only headlines. Also show where we can help shape and develop the opportunity, and position the Hyalo designer
+(`portal-process-designer-node-v3/slides/1-DesignerValueProposition`) as our strategic delivery tool: the client
+focuses on defining the project, and a change of direction isn't prohibitive. Validate the statement and ask
+questions first. Then: state the deck structure first (Deck A and Deck B), build the decks, store them locally, and
+save the outline.
+
+**Summary:** Validated the Hyalo claim against the government deck brief and the project research. The core claim
+holds; it was reframed as "you focus on the definition and the governance; the build won't be the bottleneck".
+Hyalo doesn't make governance agile. In-progress capabilities are badged, and no Malaysian project is named. The
+board's sovereignty and lock-in questions are answered with "Proposed" positions.
+
+Agreed two decks:
+- **Deck A:** findings for Johor state leadership, 13 slides.
+- **Deck B:** how we help, plus Hyalo, 11 slides.
+
+Built both as HTML in the Hyalo government-deck style, with PDFs, `export-pdf.sh` and `deck-outline.md`, in
+`project/01 - …/presentation/`. Defaults taken: "Prepared by OrangePay", a placeholder for the first step, no
+payments content. Updated `README.md` and the project tracker. Nothing committed.

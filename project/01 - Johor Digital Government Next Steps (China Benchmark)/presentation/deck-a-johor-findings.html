@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Johor Digital Government Findings</title>
+<style>
+  :root {
+    --navy: #0B1220;
+    --light: #F7F9FC;
+    --ink: #0F172A;
+    --ink-dark: #E8EEF7;
+    --cyan: #38BDF8;
+    --indigo: #818CF8;
+    --muted: #64748B;
+    --green: #059669;
+    --amber: #D97706;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #05080F; overflow: hidden; font-family: var(--font); }
+  #stage { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  .slide {
+    position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: none;
+    background: var(--light); color: var(--ink);
+    padding: 88px 120px 110px; font-size: 30px; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .slide.active { display: block; }
+  .slide.dark {
+    background:
+      radial-gradient(900px 600px at 82% 18%, rgba(56,189,248,0.16), transparent 70%),
+      radial-gradient(800px 600px at 12% 92%, rgba(129,140,248,0.16), transparent 70%),
+      var(--navy);
+    color: var(--ink-dark);
+  }
+  .slide.content::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(1100px 500px at 100% 0%, rgba(56,189,248,0.08), transparent 70%),
+                radial-gradient(900px 500px at 0% 100%, rgba(129,140,248,0.07), transparent 70%);
+  }
+  .slide > * { position: relative; }
+  h1.title { font-size: 60px; font-weight: 700; line-height: 1.15; letter-spacing: -0.5px; max-width: 1680px; }
+  .kicker { font-size: 22px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+  .dark .kicker { color: var(--cyan); }
+  .lead { margin-top: 20px; font-size: 28px; color: #334155; max-width: 1600px; }
+  .footer { position: absolute; left: 120px; right: 120px; bottom: 40px; display: flex; justify-content: space-between; font-size: 18px; color: var(--muted); }
+  .dark .footer { color: #8193AD; }
+  .glass {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(15,23,42,0.08); border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+  }
+  .dark .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(232,238,247,0.14); box-shadow: none; }
+  .muted { color: var(--muted); }
+  .src { font-size: 19px; color: var(--muted); line-height: 1.35; }
+  .dark .src { color: #8193AD; }
+  ul.clean { list-style: none; }
+  ul.clean li { position: relative; padding-left: 36px; margin-bottom: 16px; }
+  ul.clean li::before { content: ""; position: absolute; left: 4px; top: 15px; width: 14px; height: 14px; border-radius: 4px; background: linear-gradient(135deg, var(--cyan), var(--indigo)); }
+  .row { display: flex; gap: 36px; }
+  .card { padding: 34px 38px; }
+  .card h3 { font-size: 38px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+  .card p { font-size: 30px; color: #334155; line-height: 1.4; }
+  .dark .card p { color: #C3CFDF; }
+  .callout { border-left: 6px solid var(--cyan); padding: 22px 30px; font-size: 30px; font-weight: 600; }
+  .num-big { font-size: 72px; font-weight: 800; letter-spacing: -1px; line-height: 1; color: #0284C7; }
+  .chip { display: inline-block; font-size: 21px; font-weight: 700; padding: 4px 14px; border-radius: 999px; white-space: nowrap; }
+
+  /* Title */
+  .title-wrap { position: absolute; left: 160px; top: 250px; max-width: 1150px; }
+  .t-main { font-size: 104px; font-weight: 700; letter-spacing: -2.5px; line-height: 1.02; }
+  .t-main .dot { color: var(--cyan); }
+  .tagline { margin-top: 40px; font-size: 46px; font-weight: 300; line-height: 1.22; color: var(--ink-dark); }
+  .tagline em { font-style: normal; color: var(--cyan); font-weight: 600; }
+  .title-sub { margin-top: 36px; font-size: 27px; color: #9FB0C8; }
+  .deco { position: absolute; right: 150px; top: 270px; width: 520px; height: 520px; }
+
+  /* Staircase */
+  .stairs { display: flex; align-items: flex-end; gap: 14px; margin-top: 40px; height: 500px; }
+  .stair { flex: 1; border-radius: 14px 14px 6px 6px; padding: 20px 18px; display: flex; flex-direction: column; color: #0B1220; }
+  .stair .n { font-size: 46px; font-weight: 800; line-height: 1; opacity: 0.85; }
+  .stair .nm { margin-top: 10px; font-size: 26px; font-weight: 700; line-height: 1.2; }
+  .stair .ex { margin-top: auto; font-size: 19px; line-height: 1.3; opacity: 0.8; }
+  .s-found { background: linear-gradient(180deg, #BAE6FD, #7DD3FC); }
+  .s-auto { background: linear-gradient(180deg, #C7D2FE, #A5B4FC); }
+  .s-plat { background: linear-gradient(180deg, #DDD6FE, #C4B5FD); }
+  .bands { display: flex; gap: 14px; margin-top: 14px; }
+  .band { font-size: 21px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-align: center; padding-top: 10px; border-top: 4px solid; }
+
+  /* Status table */
+  .stbl { margin-top: 34px; width: 100%; border-collapse: separate; border-spacing: 0 9px; }
+  .stbl td { padding: 13px 24px; font-size: 25px; background: rgba(255,255,255,0.75); border-top: 1px solid rgba(15,23,42,0.07); border-bottom: 1px solid rgba(15,23,42,0.07); vertical-align: middle; }
+  .stbl td:first-child { border-left: 1px solid rgba(15,23,42,0.07); border-radius: 12px 0 0 12px; font-weight: 700; width: 520px; }
+  .stbl td:last-child { border-right: 1px solid rgba(15,23,42,0.07); border-radius: 0 12px 12px 0; width: 210px; text-align: center; }
+  .stbl .sn { display: inline-block; width: 40px; color: #0284C7; font-weight: 800; }
+  .stbl th { font-size: 20px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-align: left; padding: 0 24px; }
+  .st-start { background: #D1FAE5; color: #065F46; }
+  .st-part { background: #FEF3C7; color: #92400E; }
+  .st-not { background: #E2E8F0; color: #475569; }
+
+  /* Pairs */
+  .pairs { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 30px; }
+  .pairs .ph { font-size: 22px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; padding-left: 6px; }
+  .pairs .p { font-size: 30px; padding: 18px 28px; border-radius: 12px; line-height: 1.3; }
+  .pairs .ok { background: rgba(16,185,129,0.10); border-left: 6px solid #10B981; }
+  .pairs .no { background: rgba(239,68,68,0.07); border-left: 6px solid #EF4444; }
+
+  /* Buckets */
+  .bucket { flex: 1; padding: 30px 32px; border-top: 8px solid; }
+  .bucket .bh { font-size: 36px; font-weight: 800; line-height: 1.1; }
+  .bucket .bt { font-size: 24px; font-weight: 600; color: var(--muted); margin: 8px 0 22px; }
+  .bucket .it { background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; font-size: 29px; line-height: 1.3; }
+  .bucket .it b { display: block; }
+  .bucket .it span { display: block; font-size: 23px; color: var(--muted); margin-top: 4px; }
+
+  /* Flow */
+  .flow { display: flex; align-items: center; gap: 22px; margin-top: 44px; }
+  .fbox { padding: 26px 28px; border-radius: 16px; font-size: 27px; line-height: 1.3; }
+  .fbox b { display: block; font-size: 31px; margin-bottom: 6px; }
+  .farrow { flex: none; }
+
+  /* Grid of cards */
+  .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+  .qgrid .card { padding: 32px 34px 36px; }
+  .qgrid h3 { font-size: 33px; margin-bottom: 12px; }
+  .qgrid p { font-size: 27px; line-height: 1.4; color: #334155; }
+  .qn { display: inline-flex; width: 46px; height: 46px; border-radius: 50%; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--cyan), var(--indigo)); margin-bottom: 14px; }
+
+  /* Steps (closing) */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 64px; }
+  .steps .card { padding: 40px 40px 48px; }
+  .steps .card h3 { color: #fff; }
+
+  /* Print */
+  @page { size: 1920px 1080px; margin: 0; }
+  @media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: none; }
+    #stage { position: static; transform: none !important; width: 1920px; height: auto; }
+    .slide { display: block !important; position: relative; inset: auto; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .slide.content .glass { background: rgba(255,255,255,0.75); }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1. Title -->
+<section class="slide dark" data-title="From data lake to better services.">
+  <svg class="deco" viewBox="0 0 520 520" aria-hidden="true">
+    <defs>
+      <linearGradient id="dg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#38BDF8" stop-opacity="0.65"/><stop offset="1" stop-color="#818CF8" stop-opacity="0.65"/></linearGradient>
+    </defs>
+    <g fill="rgba(255,255,255,0.06)" stroke="url(#dg)" stroke-width="2">
+      <rect x="20"  y="400" width="58" height="80"  rx="8"/>
+      <rect x="90"  y="350" width="58" height="130" rx="8"/>
+      <rect x="160" y="300" width="58" height="180" rx="8"/>
+      <rect x="230" y="245" width="58" height="235" rx="8"/>
+      <rect x="300" y="190" width="58" height="290" rx="8"/>
+      <rect x="370" y="130" width="58" height="350" rx="8"/>
+      <rect x="440" y="70"  width="58" height="410" rx="8"/>
+    </g>
+    <path d="M49 380 L119 330 L189 280 L259 225 L329 170 L399 110 L469 50" stroke="#38BDF8" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+    <circle cx="469" cy="50" r="9" fill="#38BDF8"/>
+  </svg>
+  <div class="title-wrap">
+    <div class="kicker">Johor State · Early findings for discussion</div>
+    <div class="t-main">From data lake to better services<span class="dot">.</span></div>
+    <div class="tagline">What Johor can learn from <em>China's digital-government journey</em>, and what to build next.</div>
+    <div class="title-sub">Prepared by OrangePay · October 2026</div>
+  </div>
+</section>
+
+<!-- 2. Why now -->
+<section class="slide content" data-title="Three pressures make this the right time to act.">
+  <div class="kicker">Why now</div>
+  <h1 class="title">Three pressures make this the right time to act.</h1>
+  <div class="row" style="margin-top:52px; align-items:stretch;">
+    <div class="glass card" style="flex:1;">
+      <div class="num-big">42</div>
+      <h3 style="margin-top:18px;">The data-centre boom</h3>
+      <p>Data-centre projects approved as of Q2 2025, worth RM164bn. Investors expect approvals to be fast and predictable.</p>
+    </div>
+    <div class="glass card" style="flex:1;">
+      <div class="num-big">Jan 2025</div>
+      <h3 style="margin-top:18px;">The Johor–Singapore SEZ</h3>
+      <p>Agreement signed. IMFC-J now coordinates investor approvals across federal and state agencies.</p>
+    </div>
+    <div class="glass card" style="flex:1;">
+      <div class="num-big">Now</div>
+      <h3 style="margin-top:18px;">The state data lake</h3>
+      <p>Being built today. It gives Johor the data foundation that most of China's reforms had to create first.</p>
+    </div>
+  </div>
+  <div class="glass callout" style="margin-top:44px;">The pressure lands on approvals, investor facilitation and council services, which are exactly where a data lake can help.</div>
+  <p class="src" style="margin-top:22px;">Sources: Johor state announcements reported by The Sun and Malay Mail (July 2025); the JS-SEZ agreement (7 January 2025).</p>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 3. The question -->
+<section class="slide content" data-title="The data lake is the foundation. What do we build on it?">
+  <div class="kicker">The question</div>
+  <h1 class="title">The data lake is the foundation. What do we build on it?</h1>
+  <p class="lead">We looked for projects that serve at least one of three goals, and sorted them by how soon they can deliver.</p>
+  <div class="row" style="margin-top:64px; align-items:stretch;">
+    <div class="glass card" style="flex:1; border-top:8px solid var(--cyan); padding:48px 44px;">
+      <h3>Less paperwork</h3>
+      <p>Citizens and businesses stop bringing documents that government already holds, and make fewer visits.</p>
+    </div>
+    <div class="glass card" style="flex:1; border-top:8px solid #6366F1; padding:48px 44px;">
+      <h3>Faster processing</h3>
+      <p>Approvals, licences and permits move in days, not weeks, with progress anyone can see.</p>
+    </div>
+    <div class="glass card" style="flex:1; border-top:8px solid #A855F7; padding:48px 44px;">
+      <h3>New services and investment</h3>
+      <p>New services that draw investment and make daily life better for local businesses and residents.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 4. What we looked at -->
+<section class="slide content" data-title="We studied five Chinese regions that moved from paper to data-driven government.">
+  <div class="kicker">What we looked at</div>
+  <h1 class="title">We studied five Chinese regions that moved from paper to data-driven government.</h1>
+  <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:22px; margin-top:60px;">
+    <div class="glass card" style="padding:34px 28px 40px;"><h3 style="font-size:34px;">Zhejiang</h3><p style="font-size:27px;">"At Most One Visit": a citizen visits government at most once per matter.</p></div>
+    <div class="glass card" style="padding:34px 28px 40px;"><h3 style="font-size:34px;">Shanghai</h3><p style="font-size:27px;">One online front door, and digital certificates that replace photocopies.</p></div>
+    <div class="glass card" style="padding:34px 28px 40px;"><h3 style="font-size:34px;">Shenzhen</h3><p style="font-size:27px;">Instant approval for low-risk, rule-based applications.</p></div>
+    <div class="glass card" style="padding:34px 28px 40px;"><h3 style="font-size:34px;">Suzhou</h3><p style="font-size:27px;">Small businesses get loans based on government-held records.</p></div>
+    <div class="glass card" style="padding:34px 28px 40px;"><h3 style="font-size:34px;">Beijing</h3><p style="font-size:27px;">One complaints hotline whose data sets the city's priorities.</p></div>
+  </div>
+  <div class="row" style="margin-top:44px; gap:28px;">
+    <div class="glass callout" style="flex:1.2; font-weight:500; font-size:28px;"><strong>Why China:</strong> it has gone furthest on this journey at city and provincial scale, and its failures are as instructive as its successes.</div>
+    <div class="glass callout" style="flex:1; font-weight:500; font-size:28px; border-left-color:#D97706;"><strong>A caveat:</strong> most results are government-reported (2017–2024). We treat them as direction, not proof.</div>
+  </div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 5. Seven stages -->
+<section class="slide content" data-title="China went in seven stages, and the order matters.">
+  <div class="kicker">The journey</div>
+  <h1 class="title">China went in seven stages, and the order matters.</h1>
+  <div class="stairs">
+    <div class="stair s-found" style="height:44%;"><div class="n">1</div><div class="nm">Cut visits and paperwork</div></div>
+    <div class="stair s-found" style="height:52%;"><div class="n">2</div><div class="nm">One online front door</div></div>
+    <div class="stair s-found" style="height:60%;"><div class="n">3</div><div class="nm">Share data, not documents</div></div>
+    <div class="stair s-auto" style="height:70%;"><div class="n">4</div><div class="nm">Automate the decision</div></div>
+    <div class="stair s-auto" style="height:79%;"><div class="n">5</div><div class="nm">Bundle services by life event</div></div>
+    <div class="stair s-plat" style="height:89%;"><div class="n">6</div><div class="nm">Run the city from one platform</div></div>
+    <div class="stair s-plat" style="height:100%;"><div class="n">7</div><div class="nm">Put public data to work in the economy</div></div>
+  </div>
+  <div class="bands">
+    <div class="band" style="flex:3; border-color:#38BDF8; color:#0369A1;">Foundations: process and data</div>
+    <div class="band" style="flex:2; border-color:#6366F1; color:#4338CA;">Automation</div>
+    <div class="band" style="flex:2; border-color:#8B5CF6; color:#6D28D9;">Platforms and data economy</div>
+  </div>
+  <div class="glass callout" style="margin-top:30px;">Stages 1–3 are cheap compared with what comes after, and every later stage depends on them.</div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 6. Where Johor stands -->
+<section class="slide content" data-title="Johor has already started on several stages.">
+  <div class="kicker">Where Johor stands</div>
+  <h1 class="title">Johor has already started on several stages.</h1>
+  <table class="stbl">
+    <tr><th>Stage</th><th>What Johor has today</th><th style="text-align:center;">Status</th></tr>
+    <tr><td><span class="sn">1</span>Cut visits and paperwork</td><td>Council counters; OSC 3.0 Plus for building permits</td><td><span class="chip st-start">Started</span></td></tr>
+    <tr><td><span class="sn">2</span>One online front door</td><td>Separate portals for each council; MyDigital ID at federal level</td><td><span class="chip st-part">Partial</span></td></tr>
+    <tr><td><span class="sn">3</span>Share data, not documents</td><td>The state data lake (new); the Data Sharing Act covers federal bodies only</td><td><span class="chip st-part">Being built</span></td></tr>
+    <tr><td><span class="sn">4</span>Automate the decision</td><td>—</td><td><span class="chip st-not">Not yet</span></td></tr>
+    <tr><td><span class="sn">5</span>Bundle by life event</td><td>IMFC-J for investors</td><td><span class="chip st-part">Partial</span></td></tr>
+    <tr><td><span class="sn">6</span>Run the city from one platform</td><td>Command centres in the city councils (MBJB, MBIP)</td><td><span class="chip st-part">Partial</span></td></tr>
+    <tr><td><span class="sn">7</span>Public data in the economy</td><td>—</td><td><span class="chip st-not">Not yet</span></td></tr>
+  </table>
+  <p class="src" style="margin-top:14px;">Based on public sources. To be confirmed with the state, starting with what the data lake holds today.</p>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 7. What worked -->
+<section class="slide content" data-title="What worked in China, and what didn't.">
+  <div class="kicker">Lessons</div>
+  <h1 class="title">What worked in China, and what didn't.</h1>
+  <div class="pairs">
+    <div class="ph" style="color:#047857;">Worked</div>
+    <div class="ph" style="color:#B91C1C;">Didn't work</div>
+    <div class="p ok">The <strong>process changed first</strong>, then the technology followed</div>
+    <div class="p no">Technology laid on top of unchanged paper processes</div>
+    <div class="p ok"><strong>One front door</strong> on a channel people already use</div>
+    <div class="p no">One app per department, with downloads made compulsory</div>
+    <div class="p ok"><strong>Running costs funded</strong> from day one, with a named operator</div>
+    <div class="p no">Turnkey packages that went idle after launch</div>
+    <div class="p ok">Outcomes <strong>measured and published</strong>: days, visits, cases resolved</div>
+    <div class="p no">Success reported only by the supplier</div>
+    <div class="p ok">Data used only for its <strong>stated purpose</strong>, with consequences for misuse</div>
+    <div class="p no">Data repurposed, and public trust lost</div>
+  </div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 8. Borrow the sequence -->
+<section class="slide content" data-title="Borrow China's sequence, not its enforcement.">
+  <div class="kicker">What transfers</div>
+  <h1 class="title">Borrow China's sequence, not its enforcement.</h1>
+  <div class="row" style="margin-top:46px; align-items:stretch;">
+    <div class="glass card" style="flex:1; border-top:8px solid #10B981;">
+      <h3>What transfers well</h3>
+      <ul class="clean" style="font-size:31px; margin-top:22px;">
+        <li>The order: process and data before platforms and AI</li>
+        <li>"One visit" targets and life-event bundles, which are commitments, not mandates</li>
+        <li>Rule-based approval with a manual fallback</li>
+        <li>Writing reforms into state rules, so they outlast leadership changes</li>
+      </ul>
+    </div>
+    <div class="glass card" style="flex:1; border-top:8px solid var(--amber);">
+      <h3>Johor's realities</h3>
+      <ul class="clean" style="font-size:31px; margin-top:22px;">
+        <li>Federal, state and 16 councils agree by consensus, not by mandate</li>
+        <li>The Data Sharing Act 2025 covers federal agencies only, not the state</li>
+        <li>Two-speed citizens: physical counters must stay open</li>
+        <li>Little in-house technical capacity in the district councils</li>
+      </ul>
+    </div>
+  </div>
+  <div class="glass callout" style="margin-top:34px; border-left-color:#EF4444; font-weight:500;"><strong>Don't import:</strong> blacklisting or pervasive surveillance. Both would cost the data lake public trust.</div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 9. Three buckets -->
+<section class="slide content" data-title="Opportunities fall into three buckets.">
+  <div class="kicker">Opportunities</div>
+  <h1 class="title">Opportunities fall into three buckets.</h1>
+  <div class="row" style="margin-top:40px; gap:28px; align-items:stretch;">
+    <div class="glass bucket" style="border-top-color:#10B981;">
+      <div class="bh">Quick wins</div>
+      <div class="bt">Mostly process, and data already held</div>
+      <div class="it"><b>"One visit" baseline</b><span>visits, documents and days for the top council services</span></div>
+      <div class="it"><b>Data-centre and SEZ approval tracker</b><span>one status view across agencies</span></div>
+      <div class="it"><b>Complaints insight</b><span>existing council complaints, seen state-wide</span></div>
+    </div>
+    <div class="glass bucket" style="border-top-color:#38BDF8;">
+      <div class="bh">Foundations</div>
+      <div class="bt">Shared building blocks that unlock the rest</div>
+      <div class="it"><b>State data-sharing framework</b><span>the legal and practical basis to share</span></div>
+      <div class="it"><b>Digital licences and permits</b><span>verifiable records instead of photocopies</span></div>
+      <div class="it"><b>Shared reference data</b><span>one ID for each business, property and person</span></div>
+    </div>
+    <div class="glass bucket" style="border-top-color:#8B5CF6;">
+      <div class="bh">Strategic</div>
+      <div class="bt">New services and investment draw</div>
+      <div class="it"><b>Instant approval for low-risk renewals</b><span>with a manual fallback</span></div>
+      <div class="it"><b>Life-event bundles</b><span>e.g. "build a data centre in Johor"</span></div>
+      <div class="it"><b>Water and power monitoring</b><span>to support data-centre approvals</span></div>
+    </div>
+  </div>
+  <p class="src" style="margin-top:20px;">Examples only. A fuller longlist is ready for the validation stage.</p>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 10. Critical path -->
+<section class="slide content" data-title="The critical path is a state data-sharing framework.">
+  <div class="kicker">The critical path</div>
+  <h1 class="title">The critical path is a state data-sharing framework.</h1>
+  <div class="flow">
+    <div class="glass fbox" style="flex:1;"><b>The data lake</b>Storage: data held in one place</div>
+    <svg class="farrow" width="60" height="40" viewBox="0 0 60 40" aria-hidden="true"><path d="M2 20 H44" stroke="#64748B" stroke-width="5"/><path d="M38 6 L58 20 L38 34 Z" fill="#64748B"/></svg>
+    <div class="fbox" style="flex:1.3; background:linear-gradient(135deg,#38BDF8,#818CF8); color:#0B1220;"><b>+ A state data-sharing framework</b>A state directive or enactment, a data catalogue, and standard agreements between state, councils and federal bodies</div>
+    <svg class="farrow" width="60" height="40" viewBox="0 0 60 40" aria-hidden="true"><path d="M2 20 H44" stroke="#64748B" stroke-width="5"/><path d="M38 6 L58 20 L38 34 Z" fill="#64748B"/></svg>
+    <div class="glass fbox" style="flex:1;"><b>Shared, trusted data</b>The base for quick wins, automation and new services</div>
+  </div>
+  <div class="glass card" style="margin-top:40px;">
+    <h3>Why Johor needs its own</h3>
+    <p>The Data Sharing Act 2025 covers federal public-sector bodies only. Any data flow between state agencies, the 16 councils and federal bodies needs its own legal basis.</p>
+  </div>
+  <div class="glass callout" style="margin-top:30px;">Without it, the data lake is storage. With it, the data lake is the foundation for everything else.</div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 11. Principles -->
+<section class="slide content" data-title="Six principles for how to deliver it.">
+  <div class="kicker">How to deliver</div>
+  <h1 class="title">Six principles for how to deliver it.</h1>
+  <div class="qgrid">
+    <div class="glass card"><div class="qn">1</div><h3>The state owns; an operator runs</h3><p>Government keeps the data, the rules and the outcomes. A dedicated operator builds and runs the platform.</p></div>
+    <div class="glass card"><div class="qn">2</div><h3>Shared services for councils</h3><p>District councils use shared services, rather than each buying its own package.</p></div>
+    <div class="glass card"><div class="qn">3</div><h3>Fund running costs, not just the build</h3><p>The biggest failures were systems nobody was paid to run after launch.</p></div>
+    <div class="glass card"><div class="qn">4</div><h3>Measure use, not launches</h3><p>Usage and outcome targets set from day one, and published.</p></div>
+    <div class="glass card"><div class="qn">5</div><h3>Write reforms into state rules</h3><p>So that the reforms outlast changes in leadership.</p></div>
+    <div class="glass card"><div class="qn">6</div><h3>Keep the right to change operators</h3><p>Choose operators competitively, with term limits and an exit clause, and keep the data with the state.</p></div>
+  </div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 12. Questions -->
+<section class="slide content" data-title="Questions to answer next.">
+  <div class="kicker">To validate</div>
+  <h1 class="title">Questions to answer next.</h1>
+  <div class="qgrid">
+    <div class="glass card"><h3>The data lake</h3><p>Which datasets does it hold today, from which agencies and councils, and who owns it?</p></div>
+    <div class="glass card"><h3>Authority to share</h3><p>Which body can direct data sharing across all 16 councils, and is there appetite for it?</p></div>
+    <div class="glass card"><h3>Pilot councils</h3><p>Which two or three councils would volunteer to go first?</p></div>
+    <div class="glass card"><h3>Existing plans</h3><p>Where does the Johor Digital Master Plan 2030 stand, and which targets are reported today?</p></div>
+    <div class="glass card"><h3>Investor approvals</h3><p>Does IMFC-J track cases in a system that could be connected, or is tracking manual?</p></div>
+    <div class="glass card"><h3>Opening data</h3><p>How much appetite is there for consent-based sharing with banks, or for opening data to the public?</p></div>
+  </div>
+  <div class="footer"><span>Johor: from data lake to better services · Early findings</span><span class="num"></span></div>
+</section>
+
+<!-- 13. Next step -->
+<section class="slide dark" data-title="A short validation workshop is the next step.">
+  <div class="kicker">Next step</div>
+  <h1 class="title">A short validation workshop is the next step.</h1>
+  <div class="steps">
+    <div class="glass card"><div class="qn">1</div><h3>Confirm the starting point</h3><p>What the data lake holds, who owns it, and what each council runs today.</p></div>
+    <div class="glass card"><div class="qn">2</div><h3>Choose the priorities</h3><p>Pick three to five items across the three buckets, with the data-sharing framework on the critical path.</p></div>
+    <div class="glass card"><div class="qn">3</div><h3>Agree pilots and a baseline</h3><p>Name the pilot councils, and the visits, documents and days to measure progress against.</p></div>
+  </div>
+  <div class="glass callout" style="margin-top:50px; color:#E8EEF7; font-weight:500;"><span style="color:var(--cyan); font-weight:700;">Outcome:</span> a prioritised roadmap for the state, built on what Johor already has.</div>
+  <div class="footer"><span>Prepared by OrangePay</span><span class="num"></span></div>
+</section>
+
+</div>
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var total = slides.length;
+  slides.forEach(function (s, i) {
+    var n = s.querySelector('.footer .num');
+    if (n) n.textContent = (i + 1) + ' / ' + total;
+  });
+  var current = 0;
+  function fromHash() {
+    var n = parseInt((location.hash || '').replace('#', ''), 10);
+    return (n >= 1 && n <= total) ? n - 1 : 0;
+  }
+  function show(i, updateHash) {
+    current = Math.max(0, Math.min(total - 1, i));
+    slides.forEach(function (s, k) { s.classList.toggle('active', k === current); });
+    if (updateHash !== false) {
+      var h = '#' + (current + 1);
+      if (location.hash !== h) history.replaceState(null, '', h);
+    }
+  }
+  function fit() {
+    var scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    var x = (window.innerWidth - 1920 * scale) / 2;
+    var y = (window.innerHeight - 1080 * scale) / 2;
+    stage.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + scale + ')';
+  }
+  document.addEventListener('keydown', function (e) {
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ' || k === 'Spacebar') { e.preventDefault(); show(current + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); show(current - 1); }
+    else if (k === 'Home') { show(0); }
+    else if (k === 'End') { show(total - 1); }
+  });
+  document.addEventListener('click', function (e) {
+    if (e.clientX < window.innerWidth / 3) show(current - 1); else show(current + 1);
+  });
+  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+  window.addEventListener('resize', fit);
+  fit();
+  show(fromHash(), false);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Johor Delivery Approach</title>
+<style>
+  :root {
+    --navy: #0B1220;
+    --light: #F7F9FC;
+    --ink: #0F172A;
+    --ink-dark: #E8EEF7;
+    --cyan: #38BDF8;
+    --indigo: #818CF8;
+    --muted: #64748B;
+    --badge-bg: #FEF3C7;
+    --badge-fg: #92400E;
+    --todo-bg: #FDE68A;
+    --todo-border: #D97706;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #05080F; overflow: hidden; font-family: var(--font); }
+  #stage { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  .slide {
+    position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: none;
+    background: var(--light); color: var(--ink);
+    padding: 88px 120px 110px; font-size: 30px; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .slide.active { display: block; }
+  .slide.dark {
+    background:
+      radial-gradient(900px 600px at 82% 18%, rgba(56,189,248,0.16), transparent 70%),
+      radial-gradient(800px 600px at 12% 92%, rgba(129,140,248,0.16), transparent 70%),
+      var(--navy);
+    color: var(--ink-dark);
+  }
+  .slide.content::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(1100px 500px at 100% 0%, rgba(56,189,248,0.08), transparent 70%),
+                radial-gradient(900px 500px at 0% 100%, rgba(129,140,248,0.07), transparent 70%);
+  }
+  .slide > * { position: relative; }
+  h1.title { font-size: 60px; font-weight: 700; line-height: 1.15; letter-spacing: -0.5px; max-width: 1680px; }
+  .kicker { font-size: 22px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+  .dark .kicker { color: var(--cyan); }
+  .lead { margin-top: 20px; font-size: 28px; color: #334155; max-width: 1600px; }
+  .dark .lead { color: #C3CFDF; }
+  .footer { position: absolute; left: 120px; right: 120px; bottom: 40px; display: flex; justify-content: space-between; font-size: 18px; color: var(--muted); }
+  .dark .footer { color: #8193AD; }
+  .glass {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(15,23,42,0.08); border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+  }
+  .dark .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(232,238,247,0.14); box-shadow: none; }
+  .muted { color: var(--muted); }
+  .src { font-size: 19px; color: var(--muted); line-height: 1.35; }
+  ul.clean { list-style: none; }
+  ul.clean li { position: relative; padding-left: 36px; margin-bottom: 16px; }
+  ul.clean li::before { content: ""; position: absolute; left: 4px; top: 15px; width: 14px; height: 14px; border-radius: 4px; background: linear-gradient(135deg, var(--cyan), var(--indigo)); }
+  .row { display: flex; gap: 36px; }
+  .card { padding: 34px 38px; }
+  .card h3 { font-size: 38px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+  .card p { font-size: 30px; color: #334155; line-height: 1.4; }
+  .dark .card p { color: #C3CFDF; }
+  .callout { border-left: 6px solid var(--cyan); padding: 22px 30px; font-size: 30px; font-weight: 600; }
+  .qn { display: inline-flex; width: 46px; height: 46px; border-radius: 50%; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--cyan), var(--indigo)); margin-bottom: 14px; }
+
+  .badge-progress { display: inline-block; background: var(--badge-bg); color: var(--badge-fg); font-size: 22px; font-weight: 700; padding: 6px 16px; border-radius: 999px; white-space: nowrap; vertical-align: middle; }
+  .badge-illus { display: inline-block; background: #E0E7FF; color: #3730A3; border: 2px solid #818CF8; font-size: 22px; font-weight: 700; padding: 5px 16px; border-radius: 999px; white-space: nowrap; vertical-align: middle; }
+  .badge-proposed { display: inline-block; background: #F1F5F9; color: #334155; border: 2px solid #94A3B8; font-size: 22px; font-weight: 700; padding: 3px 14px; border-radius: 999px; white-space: nowrap; vertical-align: middle; }
+  .placeholder { display: inline-block; background: var(--todo-bg); border: 2px dashed var(--todo-border); color: #78350F; font-size: 26px; font-weight: 600; padding: 10px 20px; border-radius: 8px; }
+
+  /* Title */
+  .title-wrap { position: absolute; left: 160px; top: 270px; max-width: 1000px; }
+  .t-main { font-size: 100px; font-weight: 700; letter-spacing: -2.5px; line-height: 1.04; }
+  .t-main .dot { color: var(--cyan); }
+  .tagline { margin-top: 40px; font-size: 44px; font-weight: 300; line-height: 1.22; color: var(--ink-dark); }
+  .tagline em { font-style: normal; color: var(--cyan); font-weight: 600; }
+  .title-sub { margin-top: 36px; font-size: 27px; color: #9FB0C8; }
+  .lens { position: absolute; right: 150px; top: 250px; width: 560px; height: 560px; }
+
+  /* Three-point columns */
+  .col3 { flex: 1; padding: 32px 34px; border-top: 8px solid; }
+  .col3 .ch { font-size: 44px; font-weight: 800; line-height: 1; }
+  .col3 .cs { font-size: 25px; color: var(--muted); font-weight: 600; margin: 10px 0 22px; }
+  .col3 ul.clean li { font-size: 30px; margin-bottom: 20px; }
+
+  /* Cycle (risk slide) */
+  .cycle { display: flex; align-items: center; gap: 14px; margin-top: 44px; }
+  .cyc { flex: 1; padding: 30px 20px; border-radius: 14px; background: #fff; border: 1px solid rgba(15,23,42,0.1); font-size: 27px; line-height: 1.3; text-align: center; }
+  .cyc b { display: block; font-size: 32px; margin-bottom: 4px; }
+  .cyc.bad { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.4); }
+
+  /* Ownership split */
+  .own { flex: 1; padding: 40px 42px 30px; }
+  .own .oh { font-size: 23px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 16px; }
+  .own ul.clean li { font-size: 32px; margin-bottom: 24px; }
+
+  /* Product overview (copied from the government deck) */
+  .ov-top { display: flex; justify-content: space-between; align-items: center; gap: 40px; margin-top: 22px; }
+  .ov-top p { font-size: 29px; color: #C3CFDF; }
+  .legend { display: flex; gap: 26px; flex: none; font-size: 24px; font-weight: 700; color: #E8EEF7; }
+  .legend span { display: inline-flex; align-items: center; gap: 10px; }
+  .legend i { display: inline-block; width: 26px; height: 26px; border-radius: 7px; }
+  .ov { display: flex; align-items: stretch; margin: 34px -20px 0; height: 500px; }
+  .ov-col { border-radius: 16px; padding: 20px 16px; display: flex; flex-direction: column; gap: 12px; border: 2px solid; }
+  .ov-col.yours { border-color: #34D399; background: rgba(52,211,153,0.08); }
+  .ov-col.hyalo { border-color: #38BDF8; background: rgba(56,189,248,0.13); box-shadow: 0 0 0 1px rgba(56,189,248,0.25), 0 0 40px rgba(56,189,248,0.12); }
+  .ov-col.ext { border: 2px dashed rgba(232,238,247,0.35); background: rgba(255,255,255,0.03); }
+  .ov-h { font-size: 26px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
+  .yours .ov-h { color: #6EE7B7; }
+  .ext .ov-h { color: #C3CFDF; }
+  .prod-h { margin: -20px -16px 6px; padding: 14px 18px 16px; border-radius: 14px 14px 0 0; background: linear-gradient(135deg, #38BDF8 0%, #818CF8 100%); color: #0B1220; }
+  .prod-h .eb { display: block; font-size: 22px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.75; }
+  .prod-h .nm { display: block; font-size: 34px; font-weight: 900; line-height: 1.05; letter-spacing: -0.5px; white-space: nowrap; }
+  .ov-item { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 11px 14px; }
+  .ov-item b { display: block; font-size: 26px; color: #FFFFFF; line-height: 1.2; }
+  .ov-item span { display: block; font-size: 22px; color: #B4C3D8; line-height: 1.3; margin-top: 3px; }
+  .ov-item.strong { background: rgba(56,189,248,0.22); border: 1px solid rgba(56,189,248,0.6); }
+  .ov-row { display: flex; justify-content: space-between; align-items: center; border-radius: 8px; padding: 7px 12px; font-size: 23px; font-weight: 700; color: #E8EEF7; background: rgba(11,18,32,0.55); }
+  .ov-row .ok { color: #34D399; }
+  .ov-row .bad { color: #F87171; }
+  .ov-note { font-size: 22px; color: #9FB0C8; line-height: 1.3; margin-top: auto; }
+  .ov-arrow { width: 36px; flex: none; display: flex; align-items: center; justify-content: center; }
+  .ov-two { margin-top: 36px; border-left: 6px solid var(--cyan); padding: 18px 28px; font-size: 28px; color: #E8EEF7; }
+
+  /* Timeline */
+  .tl { position: relative; margin-top: 56px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px; }
+  .tl::before { content: ""; position: absolute; left: 40px; right: 40px; top: 36px; height: 4px; background: linear-gradient(90deg, var(--cyan), var(--indigo)); border-radius: 2px; }
+  .tl .step { position: relative; }
+  .tl .dotn { width: 76px; height: 76px; border-radius: 50%; background: #0F172A; color: var(--cyan); font-size: 32px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 4px solid var(--light); box-shadow: 0 0 0 3px var(--cyan); }
+  .tl .who { margin-top: 26px; font-size: 22px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #0369A1; }
+  .tl .what { margin-top: 12px; font-size: 30px; line-height: 1.35; color: #0F172A; }
+
+  /* Agentic stages */
+  .stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 44px; }
+  .stg { padding: 30px 30px; border-radius: 14px; background: rgba(255,255,255,0.6); border: 1px solid rgba(15,23,42,0.08); opacity: 0.7; }
+  .stg .sn { font-size: 21px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .stg b { display: block; font-size: 33px; margin-top: 6px; }
+  .stg span { display: block; font-size: 25px; color: #475569; margin-top: 6px; line-height: 1.3; }
+  .stg.on { opacity: 1; background: linear-gradient(135deg, #38BDF8, #818CF8); border: none; color: #0B1220; }
+  .stg.on .sn, .stg.on span { color: #0B1220; }
+  .map { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 34px; }
+  .map .card { padding: 32px 34px; }
+  .map h3 { font-size: 32px; }
+  .map p { font-size: 27px; }
+
+  /* Grid of cards */
+  .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+  .qgrid .card { padding: 30px 32px 34px; }
+  .qgrid .qh { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 10px; }
+  .qgrid h3 { font-size: 32px; margin: 0; }
+  .qgrid p { font-size: 27px; line-height: 1.38; color: #334155; }
+
+  /* Print */
+  @page { size: 1920px 1080px; margin: 0; }
+  @media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: none; }
+    #stage { position: static; transform: none !important; width: 1920px; height: auto; }
+    .slide { display: block !important; position: relative; inset: auto; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .slide.content .glass { background: rgba(255,255,255,0.75); }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1. Title -->
+<section class="slide dark" data-title="Shaping Johor's next steps, together.">
+  <svg class="lens" viewBox="0 0 560 560" aria-hidden="true">
+    <defs>
+      <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38BDF8" stop-opacity="0.55"/><stop offset="1" stop-color="#818CF8" stop-opacity="0.35"/></linearGradient>
+      <linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.12"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.02"/></linearGradient>
+    </defs>
+    <rect x="70" y="70" width="300" height="300" rx="36" fill="url(#lg2)" stroke="url(#lg1)" stroke-width="2"/>
+    <rect x="190" y="190" width="300" height="300" rx="36" fill="url(#lg2)" stroke="url(#lg1)" stroke-width="2"/>
+    <g stroke="#38BDF8" stroke-opacity="0.75" stroke-width="3" fill="none">
+      <circle cx="240" cy="250" r="12"/><circle cx="330" cy="330" r="12"/><circle cx="420" cy="290" r="12"/><circle cx="330" cy="420" r="12"/>
+      <path d="M250 258 L320 322 M342 326 L408 296 M330 342 L330 408"/>
+    </g>
+  </svg>
+  <div class="title-wrap">
+    <div class="kicker">For discussion · MDEC and Johor State IT</div>
+    <div class="t-main">Shaping Johor's next steps, together<span class="dot">.</span></div>
+    <div class="tagline">How we can help <em>shape, define and deliver</em> what comes after the data lake.</div>
+    <div class="title-sub">OrangePay · October 2026</div>
+  </div>
+</section>
+
+<!-- 2. Recap -->
+<section class="slide content" data-title="Three findings shape how this should be delivered.">
+  <div class="kicker">From the findings</div>
+  <h1 class="title">Three findings shape how this should be delivered.</h1>
+  <div class="row" style="margin-top:52px; align-items:stretch;">
+    <div class="glass card" style="flex:1;"><div class="qn">1</div><h3>The order matters</h3><p>Process and data foundations come before platforms and AI. Skipping ahead is how projects go idle.</p></div>
+    <div class="glass card" style="flex:1;"><div class="qn">2</div><h3>The critical path is governance</h3><p>A state data-sharing framework, and agreement across 16 councils. Neither of these is a software problem.</p></div>
+    <div class="glass card" style="flex:1;"><div class="qn">3</div><h3>Delivery must expect change</h3><p>With consensus across councils and new priorities from the data-centre boom and the SEZ, direction will shift.</p></div>
+  </div>
+  <div class="glass callout" style="margin-top:44px;">So the delivery approach must keep the state in control, and make changing direction cheap.</div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 3. Where we can help -->
+<section class="slide content" data-title="We can help at three points: shape, define and deliver.">
+  <div class="kicker">Where we can help</div>
+  <h1 class="title">We can help at three points: shape, define and deliver.</h1>
+  <div class="row" style="margin-top:46px; gap:28px; align-items:stretch;">
+    <div class="glass col3" style="border-top-color:#10B981;">
+      <div class="ch">Shape</div>
+      <div class="cs">Decide what to do first</div>
+      <ul class="clean">
+        <li>Run the validation workshop</li>
+        <li>Set the "one visit" baseline for the top council services</li>
+        <li>Help choose the pilot councils</li>
+        <li>Line up the federal and state path with MDEC</li>
+      </ul>
+    </div>
+    <div class="glass col3" style="border-top-color:#38BDF8;">
+      <div class="ch">Define</div>
+      <div class="cs">Make each service clear</div>
+      <ul class="clean">
+        <li>Map priority services as clear process flows and business rules</li>
+        <li>Agree them with the people who own them</li>
+        <li>Keep one record that design, build and run all share</li>
+      </ul>
+    </div>
+    <div class="glass col3" style="border-top-color:#818CF8;">
+      <div class="ch">Deliver</div>
+      <div class="cs">Turn definitions into services</div>
+      <ul class="clean">
+        <li>Build quick wins on the data lake first</li>
+        <li>Then the foundations, one service at a time</li>
+        <li>Train state and council officers to own the result</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 4. The usual risk -->
+<section class="slide content" data-title="The usual risk: the definition is locked in before anyone has learned.">
+  <div class="kicker">The usual risk</div>
+  <h1 class="title">The usual risk: the definition is locked in before anyone has learned.</h1>
+  <div class="cycle">
+    <div class="cyc"><b>Specify</b>a long specification, written up front</div>
+    <svg width="40" height="30" viewBox="0 0 40 30" aria-hidden="true"><path d="M2 15 H28" stroke="#64748B" stroke-width="4"/><path d="M24 5 L38 15 L24 25 Z" fill="#64748B"/></svg>
+    <div class="cyc"><b>Tender</b>and contract against it</div>
+    <svg width="40" height="30" viewBox="0 0 40 30" aria-hidden="true"><path d="M2 15 H28" stroke="#64748B" stroke-width="4"/><path d="M24 5 L38 15 L24 25 Z" fill="#64748B"/></svg>
+    <div class="cyc"><b>Build</b>for months</div>
+    <svg width="40" height="30" viewBox="0 0 40 30" aria-hidden="true"><path d="M2 15 H28" stroke="#64748B" stroke-width="4"/><path d="M24 5 L38 15 L24 25 Z" fill="#64748B"/></svg>
+    <div class="cyc bad"><b>The need has moved</b>by go-live</div>
+    <svg width="40" height="30" viewBox="0 0 40 30" aria-hidden="true"><path d="M2 15 H28" stroke="#64748B" stroke-width="4"/><path d="M24 5 L38 15 L24 25 Z" fill="#64748B"/></svg>
+    <div class="cyc bad"><b>Change costs</b>a variation order, or a rewrite</div>
+  </div>
+  <div class="row" style="margin-top:44px; gap:28px; align-items:stretch;">
+    <div class="glass card" style="flex:1;"><h3>What China's failures show</h3><p>Turnkey smart-city packages went idle within months when priorities moved or data was not shared. Technology placed on top of unchanged processes delivered little.</p></div>
+    <div class="glass card" style="flex:1;"><h3>Why it matters more in Johor</h3><p>Sixteen councils deciding by consensus, plus fast-moving demands from the data-centre boom and the SEZ, mean the definition will change during delivery.</p></div>
+  </div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 5. Core claim -->
+<section class="slide content" data-title="You focus on the definition and the governance. The build won't be the bottleneck.">
+  <div class="kicker">Our approach</div>
+  <h1 class="title">You focus on the definition and the governance. The build won't be the bottleneck.</h1>
+  <div class="row" style="margin-top:46px; gap:28px; align-items:stretch;">
+    <div class="glass own" style="border-top:8px solid #34D399;">
+      <div class="oh" style="color:#047857;">The state and councils own</div>
+      <ul class="clean">
+        <li>What each service should do, and for whom</li>
+        <li>The rules, and who approves them</li>
+        <li>Data-sharing agreements, and getting the councils on board</li>
+      </ul>
+    </div>
+    <div class="glass own" style="border-top:8px solid var(--cyan);">
+      <div class="oh" style="color:#0369A1;">We carry, with Hyalo</div>
+      <ul class="clean">
+        <li>Turning approved definitions into running services</li>
+        <li>Keeping design, build and run in one record</li>
+        <li>Making each change quick to apply, check and approve</li>
+      </ul>
+    </div>
+  </div>
+  <div class="glass callout" style="margin-top:38px;">When direction changes, you change the definition. You don't start again.</div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 6. Hyalo in one picture -->
+<section class="slide dark" data-title="Hyalo is where every change is seen, approved and run.">
+  <div class="kicker">Hyalo in one picture</div>
+  <h1 class="title">Hyalo is where every change is seen, approved and run.</h1>
+  <div class="ov-top">
+    <p>No change goes live without an officer's approval, and every approval is recorded.</p>
+    <div class="legend">
+      <span><i style="background:#34D399;"></i>Yours</span>
+      <span><i style="background:#38BDF8;"></i>Hyalo</span>
+    </div>
+  </div>
+  <div class="ov">
+    <div class="ov-col yours" style="width:230px;">
+      <div class="ov-h">Who proposes</div>
+      <div class="ov-item"><b>An AI model</b><span>your choice, including self&#8209;hosted or in&#8209;country</span></div>
+      <div class="ov-item"><b>Your people</b><span>officers and analysts</span></div>
+      <div class="ov-note">Proposals only. Nothing goes live from here.</div>
+    </div>
+    <div class="ov-arrow"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M2 15 H24" stroke="#8EA0BA" stroke-width="4"/><path d="M20 5 L32 15 L20 25 Z" fill="#8EA0BA"/></svg></div>
+    <div class="ov-col hyalo" style="width:290px;">
+      <div class="prod-h"><span class="eb">Our product</span><span class="nm">Hyalo Designer</span></div>
+      <div class="ov-item"><b>See it</b><span>clear visual views of every design</span></div>
+      <div class="ov-item"><b>Check it</b><span>automated checks on every change</span></div>
+      <div class="ov-item strong"><b>Approve it</b><span>a named officer: a person, not software</span></div>
+    </div>
+    <div class="ov-arrow"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M2 15 H24" stroke="#8EA0BA" stroke-width="4"/><path d="M20 5 L32 15 L20 25 Z" fill="#8EA0BA"/></svg></div>
+    <div class="ov-col yours" style="width:250px;">
+      <div class="ov-h">Your source code<br>repository</div>
+      <div class="ov-item"><b>Permanent record</b><span>every design and every approval, with full history</span></div>
+      <div class="ov-row"><span>v12 · approved</span></div>
+      <div class="ov-row"><span>v11 · approved</span></div>
+      <div class="ov-row" style="opacity:0.7;"><span>v10 · approved</span></div>
+    </div>
+    <div class="ov-arrow"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M2 15 H24" stroke="#8EA0BA" stroke-width="4"/><path d="M20 5 L32 15 L20 25 Z" fill="#8EA0BA"/></svg></div>
+    <div class="ov-col yours" style="width:250px;">
+      <div class="ov-h">Build and checks</div>
+      <div class="ov-item"><b>Automated</b><span>each saved change shows pass or fail</span></div>
+      <div class="ov-row"><span>Passed</span><span class="ok">✓</span></div>
+      <div class="ov-row"><span>Failed</span><span class="bad">✗</span></div>
+      <div class="ov-note">Results shown in Hyalo.</div>
+    </div>
+    <div class="ov-arrow"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M2 15 H24" stroke="#8EA0BA" stroke-width="4"/><path d="M20 5 L32 15 L20 25 Z" fill="#8EA0BA"/></svg></div>
+    <div class="ov-col hyalo" style="width:280px;">
+      <div class="prod-h"><span class="eb">Our product</span><span class="nm">Hyalo Runtime</span></div>
+      <div class="ov-item strong"><b>Runs the approved version only</b></div>
+      <div class="ov-row"><span>Service A · v12</span><span class="ok">✓</span></div>
+      <div class="ov-row"><span>Service B · v7</span><span class="ok">✓</span></div>
+      <div class="ov-note">Hyalo shows which version runs where.</div>
+    </div>
+    <div class="ov-arrow"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M2 15 H24" stroke="#8EA0BA" stroke-width="4"/><path d="M20 5 L32 15 L20 25 Z" fill="#8EA0BA"/></svg></div>
+    <div class="ov-col ext" style="width:240px;">
+      <div class="ov-h">Connected to</div>
+      <div class="ov-item"><b>Citizen services</b></div>
+      <div class="ov-item"><b>Existing systems</b><span>designed to work with Hyalo, both ways</span></div>
+      <div class="ov-item"><b>Other agencies</b></div>
+    </div>
+  </div>
+  <div class="glass ov-two"><strong>Hyalo has two parts:</strong> <strong style="color:var(--cyan);">Hyalo Designer</strong>, where changes are seen and approved, and <strong style="color:var(--cyan);">Hyalo Runtime</strong>, which runs the approved designs.</div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 7. Illustrative example -->
+<section class="slide content" data-title="When a renewal rule changes, Johor doesn't start again.">
+  <div class="kicker"><span class="badge-illus">Illustrative example</span></div>
+  <h1 class="title">When a renewal rule changes, Johor doesn't start again.</h1>
+  <p class="muted" style="margin-top:18px; font-size:26px;">Every step uses what works today. It shows how the approach works; it is not a customer case study.</p>
+  <div class="tl">
+    <div class="step"><div class="dotn">1</div><div class="who">Policy</div><div class="what">The state adds a check before a business licence can be renewed automatically.</div></div>
+    <div class="step"><div class="dotn">2</div><div class="who">Officer</div><div class="what">An officer updates the rule in Hyalo's visual rule view, with no new tender.</div></div>
+    <div class="step"><div class="dotn">3</div><div class="who">Hyalo</div><div class="what">Automated checks run, and Hyalo shows the result.</div></div>
+    <div class="step"><div class="dotn">4</div><div class="who">Service owner</div><div class="what">The accountable owner approves. <strong>The approval is recorded.</strong></div></div>
+    <div class="step"><div class="dotn">5</div><div class="who">Hyalo Runtime</div><div class="what">The new version runs. The previous version stays on record.</div></div>
+  </div>
+  <div class="glass callout" style="margin-top:56px;">The record shows what changed, who approved it, and which version each service runs.</div>
+  <p style="margin-top:28px; font-size:28px; color:#0F172A;"><span class="badge-progress">In progress</span>&nbsp; Next: AI drafts the change for the officer to review, fix and approve.</p>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 8. MDEC agentic transformation -->
+<section class="slide content" data-title="This is MDEC's &quot;agentic transformation&quot; stage, applied to government.">
+  <div class="kicker">In MDEC's terms</div>
+  <h1 class="title">This is MDEC's "agentic transformation" stage, applied to government.</h1>
+  <div class="stages">
+    <div class="stg"><div class="sn">Stage 1</div><b>Agentic build</b><span>AI helps build software</span></div>
+    <div class="stg"><div class="sn">Stage 2</div><b>Agentic SaaS</b><span>AI replaces software subscriptions</span></div>
+    <div class="stg"><div class="sn">Stage 3</div><b>Agentic workforce</b><span>AI takes on routine roles</span></div>
+    <div class="stg on"><div class="sn">Stage 4</div><b>Agentic transformation</b><span>workflows redesigned, not just assisted</span></div>
+  </div>
+  <div class="map">
+    <div class="glass card"><h3>"One visit" baseline</h3><p>Redesign each council process around fewer visits and documents.</p></div>
+    <div class="glass card"><h3>Instant approval</h3><p>Rules that can run automatically, with a manual fallback.</p></div>
+    <div class="glass card"><h3>Life-event bundles</h3><p>One process across agencies, such as "build a data centre in Johor".</p></div>
+  </div>
+  <div class="glass callout" style="margin-top:34px;">AI proposes the redesign. A responsible officer approves it. Every step is recorded.</div>
+  <p class="src" style="margin-top:16px;">Stages as described by MDEC's chairman at MDX Forum 2026 (28 September 2026).</p>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 9. Existing systems -->
+<section class="slide content" data-title="Designed to work with what's already there.">
+  <div class="kicker">Working alongside</div>
+  <h1 class="title">Designed to work with what's already there.</h1>
+  <p class="lead">OSC 3.0 Plus, council systems, IMFC-J and the state data lake keep running. Nothing is thrown away.</p>
+  <div class="row" style="margin-top:44px; gap:28px; align-items:stretch;">
+    <div class="glass card" style="flex:1; border-top:8px solid var(--cyan);"><h3>Your systems use Hyalo</h3><p>Existing applications are designed to use new Hyalo services as if they were their own.</p></div>
+    <div class="glass card" style="flex:1; border-top:8px solid #6366F1;"><h3>Hyalo uses your systems</h3><p>New services reuse what existing systems and the data lake already do well.</p></div>
+    <div class="glass card" style="flex:1; border-top:8px solid #34D399;"><h3>No rewrite of what works</h3><p>Start with one service in one council, then move problem areas one at a time.</p></div>
+  </div>
+  <div class="glass callout" style="margin-top:38px; font-weight:500;"><strong>Counters stay open.</strong> Counter staff can file on the same digital process on a citizen's behalf, so paper disappears behind the counter.</div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 10. Starting position -->
+<section class="slide content" data-title="Our starting position on the board's first questions.">
+  <div class="kicker">Our starting position</div>
+  <h1 class="title">Our starting position on the board's first questions.</h1>
+  <div class="qgrid">
+    <div class="glass card"><div class="qh"><h3>Hosting and data residency</h3><span class="badge-proposed">Proposed</span></div><p>Hyalo Runtime and your source code repository run in your environment, in-country: your own cloud or on-premise.</p></div>
+    <div class="glass card"><div class="qh"><h3>AI model</h3><span class="badge-proposed">Proposed</span></div><p>Your choice of model, including self-hosted or in-country compute, such as through MDEC's planned National AI Compute Exchange.</p></div>
+    <div class="glass card"><div class="qh"><h3>Security</h3><span class="badge-proposed">Proposed</span></div><p>Align to the government's security framework, with independent security testing before any live use.</p></div>
+    <div class="glass card"><div class="qh"><h3>Procurement</h3><span class="badge-proposed">Proposed</span></div><p>Start small, at a scope that fits simple procurement routes.</p></div>
+    <div class="glass card"><div class="qh"><h3>Skills and support</h3><span class="badge-proposed">Proposed</span></div><p>We work alongside state and council teams at the start, and train officers to review and approve changes.</p></div>
+    <div class="glass card"><div class="qh"><h3>Continuity and exit</h3><span class="badge-proposed">Proposed</span></div><p>Designs and their full history stay in your repository. We propose source-code escrow for Hyalo Runtime.</p></div>
+  </div>
+  <div class="glass callout" style="margin-top:32px;">These are proposals, not terms. We'd rather refine them with you than assume them.</div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+<!-- 11. First step and team -->
+<section class="slide dark" data-title="A proposed first step, and the team.">
+  <div class="kicker">Next</div>
+  <h1 class="title">A proposed first step, and the team.</h1>
+  <div class="row" style="margin-top:44px; gap:32px; align-items:stretch;">
+    <div class="glass card" style="flex:1.15;">
+      <h3 style="color:#fff;">A first step</h3>
+      <p style="margin-bottom:18px;"><span class="placeholder">[TO CONFIRM: paid discovery, joint proof of concept, or workshop]</span></p>
+      <p>One quick win, in one or two councils, measured against a baseline agreed up front.</p>
+      <h3 style="color:#fff; margin-top:26px; font-size:30px;">What we'd need from you</h3>
+      <ul class="clean" style="font-size:29px; color:#C3CFDF; margin-top:14px;">
+        <li>An introduction to the data lake owner</li>
+        <li>A named service owner who can approve</li>
+        <li>One council willing to go first</li>
+      </ul>
+    </div>
+    <div class="glass card" style="flex:1;">
+      <h3 style="color:#fff;">The team</h3>
+      <p style="margin-bottom:20px;">Three founders, each with <strong style="color:#fff;">20+ years designing, building and running critical national-scale systems.</strong></p>
+      <div class="ov-item" style="margin-bottom:16px; padding:16px 18px;"><b>CEO · Design</b><span>international data standards; led a national real-time system used by the public</span></div>
+      <div class="ov-item" style="margin-bottom:16px; padding:16px 18px;"><b>CTO · Build</b><span>repeatedly relied on to deliver complex systems on very short timelines</span></div>
+      <div class="ov-item" style="padding:16px 18px;"><b>Operations leader · Run</b><span>a former CIO who ran large teams supporting critical 24x7 systems</span></div>
+    </div>
+  </div>
+  <div class="footer"><span>OrangePay · For discussion</span><span class="num"></span></div>
+</section>
+
+</div>
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var total = slides.length;
+  slides.forEach(function (s, i) {
+    var n = s.querySelector('.footer .num');
+    if (n) n.textContent = (i + 1) + ' / ' + total;
+  });
+  var current = 0;
+  function fromHash() {
+    var n = parseInt((location.hash || '').replace('#', ''), 10);
+    return (n >= 1 && n <= total) ? n - 1 : 0;
+  }
+  function show(i, updateHash) {
+    current = Math.max(0, Math.min(total - 1, i));
+    slides.forEach(function (s, k) { s.classList.toggle('active', k === current); });
+    if (updateHash !== false) {
+      var h = '#' + (current + 1);
+      if (location.hash !== h) history.replaceState(null, '', h);
+    }
+  }
+  function fit() {
+    var scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    var x = (window.innerWidth - 1920 * scale) / 2;
+    var y = (window.innerHeight - 1080 * scale) / 2;
+    stage.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + scale + ')';
+  }
+  document.addEventListener('keydown', function (e) {
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ' || k === 'Spacebar') { e.preventDefault(); show(current + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); show(current - 1); }
+    else if (k === 'Home') { show(0); }
+    else if (k === 'End') { show(total - 1); }
+  });
+  document.addEventListener('click', function (e) {
+    if (e.clientX < window.innerWidth / 3) show(current - 1); else show(current + 1);
+  });
+  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+  window.addEventListener('resize', fit);
+  fit();
+  show(fromHash(), false);
+})();
+</script>
+</body>
+</html>

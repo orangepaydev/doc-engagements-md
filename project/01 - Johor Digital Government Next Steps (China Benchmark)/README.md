@@ -43,6 +43,12 @@ Supporting docs in this folder:
   and what it means for us.
   - [01-mdec-national-ai-compute-exchange.md](research/01-mdec-national-ai-compute-exchange.md): MDEC's National AI
     Compute Exchange (Q1 2027), MD Status, Budget 2027 AI measures.
+- [presentation/](presentation/): decks for the MDEC / Johor state IT meeting (2026-10-22).
+  - [deck-outline.md](presentation/deck-outline.md): the agreed outline and the decisions behind it.
+  - `deck-a-johor-findings.html` / `.pdf`: headline findings the contact can take to Johor state leadership.
+  - `deck-b-how-we-help.html` / `.pdf`: how we help shape, define and deliver the work, with Hyalo as our delivery
+    approach. Not to be left with the client.
+  - `export-pdf.sh`: regenerates the PDFs.
 
 ## Validation
 [What we tried to de-risk it before committing real time — a prototype, a client conversation, a spike.
