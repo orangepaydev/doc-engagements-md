@@ -123,5 +123,16 @@ Agreed two decks:
 - **Deck B:** how we help, plus Hyalo, 11 slides.
 
 Built both as HTML in the Hyalo government-deck style, with PDFs, `export-pdf.sh` and `deck-outline.md`, in
-`project/01 - …/presentation/`. Defaults taken: "Prepared by OrangePay", a placeholder for the first step, no
+`project/01 - …/presentation/`. Defaults taken: a placeholder for the first step, no
 payments content. Updated `README.md` and the project tracker. Nothing committed.
+
+---
+
+## 2026-10-22 — Project 01: remove "Prepared by OrangePay" from Deck A (`project/01 - …/presentation/`)
+
+**Prompt:** Commit and push the presentation to a branch and raise a PR. Then: make sure "Prepared by OrangePay" is
+removed, commit the change, and add a PR comment explaining why.
+
+**Summary:** Committed and pushed to branch `johor-findings-presentation`. Removed "Prepared by OrangePay" from
+Deck A's title and closing slides so it is unbranded for the contact's board, re-exported the PDF and updated
+`deck-outline.md`. The PR text and the comment explaining the change are ready.

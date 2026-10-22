@@ -5,7 +5,7 @@ Outline for two decks for the meeting with our MDEC contact, who is also involve
 
 - **Deck A** ([deck-a-johor-findings.html](deck-a-johor-findings.html)): findings that the contact can take to
   **Johor state leadership**, framed as Johor's own roadmap on the data lake with MDEC as the federal enabler. It
-  shows headlines only and stays neutral, with no pitch. It is marked "Prepared by OrangePay".
+  shows headlines only and stays neutral, with no pitch. It is unbranded (no "Prepared by OrangePay"), so the contact can present it as their own.
 - **Deck B** ([deck-b-how-we-help.html](deck-b-how-we-help.html)): how we can help shape, define and deliver the
   work, with Hyalo as our delivery approach. Only we show it, in the meeting. It stays with us.
 - PDFs: run [export-pdf.sh](export-pdf.sh). Both decks share the Hyalo government deck's visual style
@@ -29,7 +29,7 @@ Outline for two decks for the meeting with our MDEC contact, who is also involve
   - The board's first questions (hosting, security, continuity) are answered with "Proposed" starting positions.
 - **Defaults taken.**
   - Format: HTML and PDF.
-  - Deck A is "Prepared by OrangePay".
+  - Deck A is unbranded. "Prepared by OrangePay" was removed after the first draft.
   - The first step on Deck B is a placeholder.
   - No payments content.
 
